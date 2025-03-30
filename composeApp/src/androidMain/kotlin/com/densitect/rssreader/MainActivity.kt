@@ -20,6 +20,7 @@ import com.densitect.rssreader.app.FeedSideEffect
 import com.densitect.rssreader.app.FeedStore
 import com.densitect.rssreader.screen.MainScreen
 import kotlinx.coroutines.flow.filterIsInstance
+import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -27,32 +28,34 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MaterialTheme {
-                val store: FeedStore by inject()
-                val scaffoldState = rememberScaffoldState()
-                val error = store.observerSideEffect()
-                    .filterIsInstance<FeedSideEffect.Error>()
-                    .collectAsState(null)
+            DevelopmentEntryPoint {
+                MaterialTheme {
+                    val store: FeedStore by inject()
+                    val scaffoldState = rememberScaffoldState()
+                    val error = store.observerSideEffect()
+                        .filterIsInstance<FeedSideEffect.Error>()
+                        .collectAsState(null)
 
-                LaunchedEffect(error.value) {
-                    error.value?.let { error ->
-                        scaffoldState.snackbarHostState.showSnackbar(error.error.message.toString())
+                    LaunchedEffect(error.value) {
+                        error.value?.let { error ->
+                            scaffoldState.snackbarHostState.showSnackbar(error.error.message.toString())
+                        }
                     }
-                }
 
-                Scaffold(scaffoldState = scaffoldState, snackbarHost = { hostState ->
-                    SnackbarHost(
-                        hostState = hostState,
-                        modifier = Modifier.padding(
-                            WindowInsets.systemBars
-                                .only(WindowInsetsSides.Bottom)
-                                .asPaddingValues()
+                    Scaffold(scaffoldState = scaffoldState, snackbarHost = { hostState ->
+                        SnackbarHost(
+                            hostState = hostState,
+                            modifier = Modifier.padding(
+                                WindowInsets.systemBars
+                                    .only(WindowInsetsSides.Bottom)
+                                    .asPaddingValues()
+                            )
                         )
-                    )
-                }) { paddingValues ->
-                    MainScreen(onPostClicked = {
+                    }) { paddingValues ->
+                        MainScreen(onPostClicked = {
 
-                    }, modifier = Modifier.padding(paddingValues))
+                        }, modifier = Modifier.padding(paddingValues))
+                    }
                 }
             }
         }

@@ -44,7 +44,7 @@ fun PostList(
 @Composable
 fun PostItem(item: Post, onPostClicked: (Post) -> Unit) {
     val padding = 16.dp
-    Box {
+    Box(modifier = Modifier.padding(bottom = 8.dp)) {
         Card(
             elevation = 16.dp,
             shape = RoundedCornerShape(padding)
