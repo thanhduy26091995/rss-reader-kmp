@@ -1,5 +1,6 @@
 package com.densitect.rssreader
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +17,7 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import com.densitect.rssreader.app.FeedSideEffect
 import com.densitect.rssreader.app.FeedStore
 import com.densitect.rssreader.screen.MainScreen
@@ -52,7 +54,12 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     }) { paddingValues ->
-                        MainScreen(onPostClicked = {
+                        MainScreen(onPostClicked = { post ->
+                            post.link?.let { url ->
+                                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                                startActivity(intent)
+                            }
+                        }, onEditClicked = {
 
                         }, modifier = Modifier.padding(paddingValues))
                     }

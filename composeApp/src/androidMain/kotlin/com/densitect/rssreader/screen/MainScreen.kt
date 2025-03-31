@@ -21,7 +21,11 @@ import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun MainScreen(onPostClicked: (Post) -> Unit, modifier: Modifier = Modifier) {
+fun MainScreen(
+    onPostClicked: (Post) -> Unit,
+    onEditClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val store: FeedStore by inject(FeedStore::class.java)
     val state = store.observerState().collectAsState()
     val posts = remember(state.value.feeds, state.value.selectedFeed) {
@@ -43,7 +47,7 @@ fun MainScreen(onPostClicked: (Post) -> Unit, modifier: Modifier = Modifier) {
             posts = posts,
             listState = listState,
             onPostClicked = onPostClicked,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.weight(1f)
         )
 
         MainFeedBottomBar(
@@ -55,6 +59,7 @@ fun MainScreen(onPostClicked: (Post) -> Unit, modifier: Modifier = Modifier) {
                 }
                 store.dispatch(FeedAction.SelectedFeed(feed))
             },
+            onEditClicked = onEditClicked,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -71,6 +76,7 @@ fun MainFeedBottomBar(
     feeds: List<Feed>,
     selectedFeed: Feed?,
     onFeedClicked: (Feed) -> Unit,
+    onEditClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val items = buildList {
@@ -90,7 +96,7 @@ fun MainFeedBottomBar(
 
                 Icon.Edit -> {
                     FeedIcon(feed = null, isSelected = selectedFeed == null) {
-
+                        onEditClicked.invoke()
                     }
                 }
 
